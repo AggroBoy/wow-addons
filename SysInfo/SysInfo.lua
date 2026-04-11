@@ -2,8 +2,33 @@ local ldb = LibStub("LibDataBroker-1.1")
 
 local HISTORY_SECONDS = 60
 local UPDATE_INTERVAL = 1
+local MEMORY_UPDATE_INTERVAL = 10
 local elapsed = 0
+local memoryElapsed = MEMORY_UPDATE_INTERVAL -- force immediate first update
 local fpsSamples = {}
+local addonMemoryData = {}
+local totalAddonMemory = 0
+local numAddons = 0
+
+local function updateAddonMemory()
+    UpdateAddOnMemoryUsage()
+    numAddons = C_AddOns.GetNumAddOns()
+    totalAddonMemory = 0
+    addonMemoryData = {}
+    for i = 1, numAddons do
+        local mem = GetAddOnMemoryUsage(i)
+        totalAddonMemory = totalAddonMemory + mem
+        addonMemoryData[i] = { name = C_AddOns.GetAddOnInfo(i), memory = mem }
+    end
+    table.sort(addonMemoryData, function(a, b) return a.memory > b.memory end)
+end
+
+local function formatMemory(kb)
+    if kb >= 1024 then
+        return format("%.1f MB", kb / 1024)
+    end
+    return format("%.0f KB", kb)
+end
 
 local function computeStats()
     local n = #fpsSamples
@@ -49,12 +74,32 @@ local dataobj = ldb:NewDataObject("SysInfo", {
         local _, _, homeLatency, worldLatency = GetNetStats()
         tooltip:AddDoubleLine("Home", format("%d ms", homeLatency), 1, 1, 1, 1, 1, 0)
         tooltip:AddDoubleLine("World", format("%d ms", worldLatency), 1, 1, 1, 1, 1, 0)
+
+        tooltip:AddLine(" ")
+        tooltip:AddLine("Memory", 0.8, 0.8, 0.8)
+        tooltip:AddDoubleLine("Total", formatMemory(gcinfo()), 1, 1, 1, 1, 1, 0)
+        tooltip:AddDoubleLine("Addons", formatMemory(totalAddonMemory), 1, 1, 1, 1, 1, 0)
+        if numAddons > 0 then
+            tooltip:AddLine(" ")
+            tooltip:AddLine(format("Top 5 (of %d) addons", numAddons), 0.8, 0.8, 0.8)
+            for i = 1, math.min(5, #addonMemoryData) do
+                local entry = addonMemoryData[i]
+                tooltip:AddDoubleLine(entry.name, formatMemory(entry.memory), 1, 1, 1, 1, 1, 0)
+            end
+        end
     end,
 })
 
 local frame = CreateFrame("Frame")
 frame:SetScript("OnUpdate", function(_, dt)
     elapsed = elapsed + dt
+    memoryElapsed = memoryElapsed + dt
+
+    if memoryElapsed >= MEMORY_UPDATE_INTERVAL then
+        memoryElapsed = 0
+        updateAddonMemory()
+    end
+
     if elapsed < UPDATE_INTERVAL then return end
     elapsed = 0
 
