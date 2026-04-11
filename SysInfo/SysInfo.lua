@@ -1,4 +1,5 @@
 local ldb = LibStub("LibDataBroker-1.1")
+local LibQTip = LibStub("LibQTip-1.0")
 
 local HISTORY_SECONDS = 60
 local UPDATE_INTERVAL = 1
@@ -51,41 +52,72 @@ local function computeStats()
     return min, max, sum / n, p90
 end
 
+local function addSection(tooltip, title)
+    tooltip:AddLine()
+    local line = tooltip:AddHeader(title)
+    tooltip:SetCellTextColor(line, 1, 1, 0.82, 0)
+    tooltip:AddSeparator(1, 0.5, 0.5, 0.5, 0.5)
+end
+
+local function addRow(tooltip, label, value)
+    local line = tooltip:AddLine(label, value)
+    tooltip:SetCellTextColor(line, 2, 1, 1, 0)
+end
+
+local function buildTooltip(anchor)
+    local tooltip = LibQTip:Acquire("SysInfoTip", 2, "LEFT", "RIGHT")
+
+    tooltip:AddHeader("SysInfo")
+    tooltip:AddSeparator(2)
+
+    -- Framerate
+    addSection(tooltip, "Framerate")
+    addRow(tooltip, "Current", format("%.1f", GetFramerate()))
+    local min, max, avg, p90 = computeStats()
+    if min then
+        addRow(tooltip, "Min", format("%.1f", min))
+        addRow(tooltip, "Max", format("%.1f", max))
+        addRow(tooltip, "Average", format("%.1f", avg))
+        addRow(tooltip, "90th %", format("%.1f", p90))
+    end
+
+    -- Network
+    addSection(tooltip, "Network")
+    local _, _, homeLatency, worldLatency = GetNetStats()
+    addRow(tooltip, "Home", format("%d ms", homeLatency))
+    addRow(tooltip, "World", format("%d ms", worldLatency))
+
+    -- Memory
+    addSection(tooltip, "Memory")
+    addRow(tooltip, "Total", formatMemory(gcinfo()))
+    addRow(tooltip, "Addons", formatMemory(totalAddonMemory))
+
+    if numAddons > 0 then
+        tooltip:AddLine()
+        local line = tooltip:AddLine(format("  Top 5 (of %d) addons:", numAddons))
+        tooltip:SetCellTextColor(line, 1, 0.6, 0.6, 0.6)
+        for i = 1, math.min(5, #addonMemoryData) do
+            local entry = addonMemoryData[i]
+            line = tooltip:AddLine("    " .. entry.name, formatMemory(entry.memory))
+            tooltip:SetCellTextColor(line, 1, 0.9, 0.9, 0.9)
+            tooltip:SetCellTextColor(line, 2, 0.8, 0.8, 0)
+        end
+    end
+
+    tooltip:SmartAnchorTo(anchor)
+    tooltip:Show()
+end
+
 local dataobj = ldb:NewDataObject("SysInfo", {
     type = "data source",
     text = "FPS: --",
     icon = "Interface\\AddOns\\SysInfo\\icon",
-    OnTooltipShow = function(tooltip)
-        tooltip:AddLine("SysInfo")
-
-        tooltip:AddLine(" ")
-        tooltip:AddLine("Framerate", 0.8, 0.8, 0.8)
-        tooltip:AddDoubleLine("Current", format("%.1f", GetFramerate()), 1, 1, 1, 1, 1, 0)
-        local min, max, avg, p90 = computeStats()
-        if min then
-            tooltip:AddDoubleLine("Min", format("%.1f", min), 1, 1, 1, 1, 1, 0)
-            tooltip:AddDoubleLine("Max", format("%.1f", max), 1, 1, 1, 1, 1, 0)
-            tooltip:AddDoubleLine("Average", format("%.1f", avg), 1, 1, 1, 1, 1, 0)
-            tooltip:AddDoubleLine("90th %", format("%.1f", p90), 1, 1, 1, 1, 1, 0)
-        end
-
-        tooltip:AddLine(" ")
-        tooltip:AddLine("Network", 0.8, 0.8, 0.8)
-        local _, _, homeLatency, worldLatency = GetNetStats()
-        tooltip:AddDoubleLine("Home", format("%d ms", homeLatency), 1, 1, 1, 1, 1, 0)
-        tooltip:AddDoubleLine("World", format("%d ms", worldLatency), 1, 1, 1, 1, 1, 0)
-
-        tooltip:AddLine(" ")
-        tooltip:AddLine("Memory", 0.8, 0.8, 0.8)
-        tooltip:AddDoubleLine("Total", formatMemory(gcinfo()), 1, 1, 1, 1, 1, 0)
-        tooltip:AddDoubleLine("Addons", formatMemory(totalAddonMemory), 1, 1, 1, 1, 1, 0)
-        if numAddons > 0 then
-            tooltip:AddLine(" ")
-            tooltip:AddLine(format("Top 5 (of %d) addons", numAddons), 0.8, 0.8, 0.8)
-            for i = 1, math.min(5, #addonMemoryData) do
-                local entry = addonMemoryData[i]
-                tooltip:AddDoubleLine(entry.name, formatMemory(entry.memory), 1, 1, 1, 1, 1, 0)
-            end
+    OnEnter = function(self)
+        buildTooltip(self)
+    end,
+    OnLeave = function(self)
+        if LibQTip:IsAcquired("SysInfoTip") then
+            LibQTip:Release(LibQTip:Acquire("SysInfoTip"))
         end
     end,
 })

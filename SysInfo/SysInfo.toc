@@ -7,5 +7,6 @@
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+libs\LibQTip-1.0\lib.xml
 
 SysInfo.lua
