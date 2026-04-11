@@ -1,0 +1,11 @@
+## Interface: 120001
+## Title: SysInfo
+## Notes: DataBroker plugin displaying FPS and system information.
+## Version: 1.0.0
+## IconTexture: Interface\AddOns\SysInfo\icon
+
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+
+SysInfo.lua
