@@ -102,16 +102,23 @@ local dataobj = ldb:NewDataObject("arl_broker_durability", {
     end,
 })
 
+local wasWarning = false
+
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:SetScript("OnEvent", function()
     updateDurability()
-    if lowestItem and lowestItem.pct < 0.66 then
+    local isWarning = lowestItem and lowestItem.pct < 0.66
+    if isWarning then
         local r, g, b = getDurabilityColor(lowestItem.pct)
         local color = format("|cff%02x%02x%02x", r * 255, g * 255, b * 255)
         dataobj.text = format("%s: %s%d%%|r", lowestItem.slot, color, lowestItem.pct * 100)
+        if not wasWarning then
+            PlaySoundFile("Interface\\AddOns\\ArlBrokerDurability\\error.mp3", "Master")
+        end
     else
         dataobj.text = ""
     end
+    wasWarning = isWarning
 end)
