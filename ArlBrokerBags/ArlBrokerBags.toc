@@ -1,0 +1,13 @@
+## Interface: 120001, 120005
+## Title: ArlBrokerBags
+## Notes: DataBroker plugin displaying bag space and junk items.
+## Version: 1.0.0
+## IconTexture: Interface\ICONS\INV_Backpack
+## OptionalDeps: Scrap
+
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+libs\LibQTip-1.0\lib.xml
+
+Bags.lua
