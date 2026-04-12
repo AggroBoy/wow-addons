@@ -104,6 +104,12 @@ local function buildTooltip(anchor)
         end
     end
 
+    tooltip:SetScript("OnLeave", function(tip)
+        if not tip:IsMouseOver() then
+            LibQTip:Release(tip)
+        end
+    end)
+
     tooltip:SmartAnchorTo(anchor)
     tooltip:Show()
 end
@@ -117,7 +123,10 @@ local dataobj = ldb:NewDataObject("arl_broker_sysinfo", {
     end,
     OnLeave = function(self)
         if LibQTip:IsAcquired("SysInfoTip") then
-            LibQTip:Release(LibQTip:Acquire("SysInfoTip"))
+            local tooltip = LibQTip:Acquire("SysInfoTip")
+            if not tooltip:IsMouseOver() then
+                LibQTip:Release(tooltip)
+            end
         end
     end,
 })
