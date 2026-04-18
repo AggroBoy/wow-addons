@@ -46,7 +46,7 @@ local function computeStats()
     local sorted = {}
     for i = 1, n do sorted[i] = fpsSamples[i] end
     table.sort(sorted)
-    local p90Index = math.ceil(n * 0.1) -- 90th percentile = 10% worst
+    local p90Index = math.ceil(n * 0.9)
     local p90 = sorted[p90Index]
 
     return min, max, sum / n, p90
