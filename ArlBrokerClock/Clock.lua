@@ -54,9 +54,8 @@ local function releaseTooltip()
     end
 end
 
-local function buildTooltip(anchor)
-    local tooltip = LibQTip:Acquire("ArlClockTip", 2, "LEFT", "RIGHT")
-
+local function populateTooltip(tooltip)
+    tooltip:Clear()
     tooltip:AddHeader("Clock")
     tooltip:AddSeparator(2)
 
@@ -79,6 +78,20 @@ local function buildTooltip(anchor)
             releaseTooltip()
         end
     end)
+end
+
+local function refreshTooltip()
+    if not LibQTip:IsAcquired("ArlClockTip") then
+        return
+    end
+
+    local tooltip = LibQTip:Acquire("ArlClockTip")
+    populateTooltip(tooltip)
+end
+
+local function buildTooltip(anchor)
+    local tooltip = LibQTip:Acquire("ArlClockTip", 2, "LEFT", "RIGHT")
+    populateTooltip(tooltip)
 
     tooltip:SmartAnchorTo(anchor)
     tooltip:Show()
@@ -133,4 +146,5 @@ frame:SetScript("OnUpdate", function(_, dt)
 
     elapsed = 0
     dataobj.text = getLocalTimeText()
+    refreshTooltip()
 end)
