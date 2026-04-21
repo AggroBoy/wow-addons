@@ -5,6 +5,7 @@ This repo contains a small set of custom World of Warcraft DataBroker addons.
 Current addons:
 
 - `ArlBrokerBags` for bag space and junk-item visibility.
+- `ArlBrokerClock` for current local time and quick calendar access.
 - `ArlBrokerDurability` for equipment durability.
 - `ArlBrokerFriends` for online-friends status.
 - `ArlBrokerSysInfo` for FPS and system information.
