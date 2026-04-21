@@ -3,6 +3,7 @@ local LibQTip = LibStub("LibQTip-1.0")
 
 local UPDATE_INTERVAL = 1
 local elapsed = UPDATE_INTERVAL
+local sessionStart = GetTime and GetTime() or 0
 
 local function getLocalTimeText()
     if type(date) ~= "function" then
@@ -15,6 +16,36 @@ local function getLocalTimeText()
     end
 
     return "--:--"
+end
+
+local function getServerTimeText()
+    if type(GetGameTime) ~= "function" then
+        return "--:--"
+    end
+
+    local hour, minute = GetGameTime()
+    if type(hour) ~= "number" or type(minute) ~= "number" then
+        return "--:--"
+    end
+
+    return format("%02d:%02d", hour, minute)
+end
+
+local function getSessionDurationText()
+    if type(GetTime) ~= "function" then
+        return "--:--"
+    end
+
+    local totalSeconds = math.max(0, math.floor(GetTime() - sessionStart))
+    local hours = math.floor(totalSeconds / 3600)
+    local minutes = math.floor((totalSeconds % 3600) / 60)
+    local seconds = totalSeconds % 60
+
+    if hours > 0 then
+        return format("%d:%02d:%02d", hours, minutes, seconds)
+    end
+
+    return format("%02d:%02d", minutes, seconds)
 end
 
 local function releaseTooltip()
@@ -30,6 +61,13 @@ local function buildTooltip(anchor)
     tooltip:AddSeparator(2)
 
     local line = tooltip:AddLine("Local time", getLocalTimeText())
+    tooltip:SetCellTextColor(line, 2, 1, 1, 0)
+    line = tooltip:AddLine("Server time", getServerTimeText())
+    tooltip:SetCellTextColor(line, 2, 1, 1, 0)
+
+    tooltip:AddSeparator(2)
+
+    line = tooltip:AddLine("Session", getSessionDurationText())
     tooltip:SetCellTextColor(line, 2, 1, 1, 0)
 
     tooltip:AddLine()
