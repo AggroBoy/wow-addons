@@ -5,7 +5,16 @@ local UPDATE_INTERVAL = 1
 local elapsed = UPDATE_INTERVAL
 
 local function getLocalTimeText()
-    return date("%H:%M")
+    if type(date) ~= "function" then
+        return "--:--"
+    end
+
+    local ok, text = pcall(date, "%H:%M")
+    if ok and type(text) == "string" and text ~= "" then
+        return text
+    end
+
+    return "--:--"
 end
 
 local function releaseTooltip()
@@ -38,18 +47,22 @@ local function buildTooltip(anchor)
 end
 
 local function openCalendar()
-    if not C_AddOns.IsAddOnLoaded("Blizzard_Calendar") then
-        C_AddOns.LoadAddOn("Blizzard_Calendar")
+    if C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.LoadAddOn then
+        if not C_AddOns.IsAddOnLoaded("Blizzard_Calendar") then
+            C_AddOns.LoadAddOn("Blizzard_Calendar")
+        end
     end
 
     if Calendar_Toggle then
         Calendar_Toggle()
+    elseif ToggleCalendar then
+        ToggleCalendar()
     end
 end
 
 local dataobj = ldb:NewDataObject("arl_broker_clock", {
     type = "data source",
-    text = getLocalTimeText(),
+    text = "--:--",
     icon = "Interface\\ICONS\\INV_Misc_PocketWatch_01",
     OnEnter = function(self)
         buildTooltip(self)
