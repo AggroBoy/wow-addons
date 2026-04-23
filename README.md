@@ -12,8 +12,6 @@ Current addons:
 
 As of early 2026, I use these addons all the time. They're maintained and work well.
 
-The reason this repo is private is that I've used some copyrighted material in some of the addons (the icon for SysInfo, and the audio alert in durability,) Fair enough for me to use for my own purposes, but I shouldn't be re-publishing them.
-
 ## Deploy
 
 The repo includes `deploy.sh`, which rsyncs addon directories to a mounted addons share at `/Volumes/AddOns`:

@@ -16,6 +16,7 @@ local SLOT_NAMES = {
 
 local durabilityData = {}
 local lowestItem = nil
+local WARNING_SOUNDKIT = (SOUNDKIT and SOUNDKIT.UI_ADVENTURES_DAMAGE_SWEETENER_LARGE) or 165961
 
 local function getDurabilityColor(pct)
     if pct >= 0.66 then
@@ -124,7 +125,7 @@ frame:SetScript("OnEvent", function()
         local color = format("|cff%02x%02x%02x", r * 255, g * 255, b * 255)
         dataobj.text = format("%s: %s%d%%|r", lowestItem.slot, color, lowestItem.pct * 100)
         if not wasWarning then
-            PlaySoundFile("Interface\\AddOns\\ArlBrokerDurability\\error.mp3", "Master")
+            PlaySound(WARNING_SOUNDKIT, "Master")
         end
     else
         dataobj.text = ""
