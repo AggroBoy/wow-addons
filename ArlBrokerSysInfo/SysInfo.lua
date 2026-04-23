@@ -117,7 +117,7 @@ end
 local dataobj = ldb:NewDataObject("arl_broker_sysinfo", {
     type = "data source",
     text = "FPS: --",
-    icon = "Interface\\AddOns\\ArlBrokerSysInfo\\icon",
+    icon = "Interface\\AddOns\\ArlBrokerSysInfo\\Media\\chip-computer",
     OnEnter = function(self)
         buildTooltip(self)
     end,

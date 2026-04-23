@@ -2,7 +2,7 @@
 ## Title: ArlBrokerSysInfo
 ## Notes: DataBroker plugin displaying FPS and system information.
 ## Version: 1.0.1
-## IconTexture: Interface\AddOns\ArlBrokerSysInfo\icon
+## IconTexture: Interface\AddOns\ArlBrokerSysInfo\Media\chip-computer
 
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
