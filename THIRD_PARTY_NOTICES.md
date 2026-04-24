@@ -4,6 +4,18 @@ This repository includes third-party World of Warcraft addon libraries under
 addon-local `libs` directories. Those libraries are distributed under their own
 license terms and are not covered by this repository's root MIT license.
 
+This repository also includes one separately licensed third-party icon asset
+used by `ArlBrokerSysInfo`.
+
+## ArlBrokerSysInfo icon
+
+Location: `ArlBrokerSysInfo/Media/chip-computer.tga`
+
+License: MIT
+
+The bundled icon is distributed under the license text included alongside the
+asset at `ArlBrokerSysInfo/Media/chip-computer.LICENSE.txt`.
+
 ## LibStub
 
 Location: `*/libs/LibStub/LibStub.lua`
