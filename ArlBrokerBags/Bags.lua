@@ -170,14 +170,20 @@ local dataobj = ldb:NewDataObject("arl_broker_bags", {
         if button == "LeftButton" and IsControlKeyDown() then
             scanBags()
             if #junkItems == 0 then return end
+            if GetCursorInfo() then return end
             local item = junkItems[1]
             local msg = format("Destroyed %s", item.name)
             if item.stackCount > 1 then
                 msg = msg .. " x" .. item.stackCount
             end
             msg = msg .. " (" .. formatMoney(item.stackValue) .. ")"
-            print("|cff888888[ArlBrokerBags]|r " .. msg)
             C_Container.PickupContainerItem(item.bag, item.slot)
+            local cursorType, itemID = GetCursorInfo()
+            if cursorType ~= "item" or itemID ~= item.itemID then
+                ClearCursor()
+                return
+            end
+            print("|cff888888[ArlBrokerBags]|r " .. msg)
             DeleteCursorItem()
         end
     end,
