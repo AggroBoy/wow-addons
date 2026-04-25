@@ -116,6 +116,7 @@ local function buildTooltip(anchor)
     end
 
     local tooltip = LibQTip:Acquire("ArlFriendsTip", 2, "LEFT", "RIGHT")
+    tooltip:Clear()
 
     tooltip:AddHeader("Friends")
     tooltip:AddSeparator(2)

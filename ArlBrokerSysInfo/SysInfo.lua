@@ -66,6 +66,7 @@ end
 
 local function buildTooltip(anchor)
     local tooltip = LibQTip:Acquire("SysInfoTip", 2, "LEFT", "RIGHT")
+    tooltip:Clear()
 
     tooltip:AddHeader("SysInfo")
     tooltip:AddSeparator(2)

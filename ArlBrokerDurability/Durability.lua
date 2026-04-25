@@ -66,6 +66,7 @@ end
 
 local function buildTooltip(anchor)
     local tooltip = LibQTip:Acquire("ArlDurabilityTip", 2, "LEFT", "RIGHT")
+    tooltip:Clear()
 
     tooltip:AddHeader("Durability")
     tooltip:AddSeparator(2)
