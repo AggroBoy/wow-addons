@@ -1,7 +1,16 @@
 local ldb = LibStub("LibDataBroker-1.1")
 local LibQTip = LibStub("LibQTip-1.0")
 
-local NUM_BAG_SLOTS = 4
+local BAG_IDS = {
+    Enum.BagIndex.Backpack,
+    Enum.BagIndex.Bag_1,
+    Enum.BagIndex.Bag_2,
+    Enum.BagIndex.Bag_3,
+    Enum.BagIndex.Bag_4,
+}
+if Enum.BagIndex.ReagentBag then
+    BAG_IDS[#BAG_IDS + 1] = Enum.BagIndex.ReagentBag
+end
 local junkItems = {}
 local totalFree = 0
 local totalSlots = 0
@@ -21,7 +30,7 @@ local function scanBags()
     totalSlots = 0
     totalJunkValue = 0
 
-    for bag = 0, NUM_BAG_SLOTS do
+    for _, bag in ipairs(BAG_IDS) do
         local numSlots = C_Container.GetContainerNumSlots(bag)
         local freeSlots = C_Container.GetContainerNumFreeSlots(bag)
         totalSlots = totalSlots + numSlots
